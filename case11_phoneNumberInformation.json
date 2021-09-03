@@ -1,0 +1,205 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://api.interzoid.com"
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "case11_phoneNumberInformation",
+    "description": "This API provides geographic information for a global telephone number, including city and country information, primary languages spoken, and mobile device identification.",
+    "x-chatbotFlow": [
+      {
+        "flowName": "phoneNumberInfo",
+        "flow": [
+          "/getglobalnumberinfo"
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "I want to get phoneNumberInfo endpoint",
+            "I want to use phoneNumberInfo",
+            "I want to get the global phone number information",
+            "show me the phone number info"
+          ]
+        }
+      }
+    ]
+  },
+  "externalDocs": {
+    "description": "API home page and documentation",
+    "url": "https://www.interzoid.com/services/getglobalnumberinfo"
+  },
+  "paths": {
+    "/getglobalnumberinfo": {
+      "get": {
+        "tags": [
+          "Global Phone Number Information"
+        ],
+        "summary": "Get demographic information for a global telephone number",
+        "operationId": "getglobalnumberinfo",
+        "description": "Get demographic information for a global telephone number, including city and country information, primary languages spoken, and mobile device identification.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "license",
+            "description": "Your Interzoid license API key. Register at www.interzoid.com/register",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "intlnumber",
+            "description": "International number (with country code) to retrieve information for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Global telephone demographic information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Country": {
+                      "type": "string"
+                    },
+                    "Region": {
+                      "type": "string"
+                    },
+                    "PrimaryCity": {
+                      "type": "string"
+                    },
+                    "PrimaryLanguage": {
+                      "type": "string"
+                    },
+                    "Language2": {
+                      "type": "string"
+                    },
+                    "Language3": {
+                      "type": "string"
+                    },
+                    "Mobile": {
+                      "type": "string"
+                    },
+                    "Wealth": {
+                      "type": "string"
+                    },
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Credits": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request - insufficient parameters"
+          },
+          "402": {
+            "description": "credits exhausted"
+          },
+          "403": {
+            "description": "invalid license API key"
+          },
+          "404": {
+            "description": "telephone number not found"
+          },
+          "405": {
+            "description": "method not allowed"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        },
+        "x-chatbotFlow": [
+          {
+            "flowName": "phoneNumberInfo"
+          }
+        ],
+        "x-bot-utter": [
+          {
+            "parameterName": "license",
+            "default": "b1b00c8f1498ef98dd06abb986ba62fe"
+          },
+          {
+            "parameterName": "intlnumber",
+            "utter": "What's your phone number(with country code)?"
+          },
+          {
+            "parameterName": "limit",
+            "utter": "How many limits do you want to set?"
+          }
+        ],
+        "x-user-entity": [
+          {
+            "parameterName": "license",
+            "entityValue": [
+              "b1b00c8f1498ef98dd06abb986ba62fe"
+            ]
+          },
+          {
+            "parameterName": "intlnumber",
+            "regex": [
+              "^[+]?[0-9-_]+$"
+            ],
+            "entityValue": [
+              886224622192
+            ]
+          },
+          {
+            "parameterName": "limit",
+            "regex": [
+              "^[01]?[0-9]$"
+            ],
+            "entityValue": [
+              5
+            ]
+          }
+        ],
+        "x-bot-jsonpPath-result": {
+          "item": 5,
+          "result": [
+            {
+              "title": "Country",
+              "jsonPath": "$.Country"
+            },
+            {
+              "title": "Primary City",
+              "jsonPath": "$.PrimaryCity"
+            },
+            {
+              "title": "Primary Language",
+              "jsonPath": "$.Language1"
+            },
+            {
+              "title": "Second Language",
+              "jsonPath": "$.Language2"
+            },
+            {
+              "title": "isMobile",
+              "jsonPath": "$.Mobile"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

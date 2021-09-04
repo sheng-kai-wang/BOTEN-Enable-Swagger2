@@ -79,6 +79,18 @@
         ],
         "x-user-entity": [
           {
+            "parameterName": "x-rapidapi-host",
+            "entityValue": [
+              "covid-193.p.rapidapi.com"
+            ]
+          },
+          {
+            "parameterName": "x-rapidapi-key",
+            "entityValue": [
+              "1e8542a638msh915a071ffca9b98p13e411jsn574fbebcaf13"
+            ]
+          },
+          {
             "parameterName": "country",
             "entityValue": [
               "China",

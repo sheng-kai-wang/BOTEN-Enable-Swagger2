@@ -1,0 +1,135 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "case12_Covid-19",
+    "version": "1.0.2",
+    "description": "COVID-19 is a completely FREE API that allows you to follow the progress of the coronavirus around the world. We will try to work continuously on the API in order to make it progress and add constructive data.",
+    "x-chatbotFlow": [
+      {
+        "flowName": "Covid-19",
+        "flow": [
+          "/countries",
+          "/statistics",
+          "/history"
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "I want to get Covid-19 endpoint",
+            "I want to know Covid-19 info",
+            "show me Covid-19 info"
+          ]
+        }
+      }
+    ]
+  },
+  "paths": {
+    "/statistics": {
+      "get": {
+        "description": "This endpoint refers to the entire history of statistics for a country.",
+        "parameters": [
+          {
+            "name": "x-rapidapi-host",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "covid-193.p.rapidapi.com"
+          },
+          {
+            "name": "x-rapidapi-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1e8542a638msh915a071ffca9b98p13e411jsn574fbebcaf13"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "China"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "We update the data every 15 minutes."
+          }
+        },
+        "x-chatbotFlow": [
+          {
+            "flowName": "Covid-19"
+          }
+        ],
+        "x-bot-utter": [
+          {
+            "parameterName": "x-rapidapi-host",
+            "default": "covid-193.p.rapidapi.com"
+          },
+          {
+            "parameterName": "x-rapidapi-key",
+            "default": "1e8542a638msh915a071ffca9b98p13e411jsn574fbebcaf13"
+          },
+          {
+            "parameterName": "country",
+            "utter": "Which country do you want to query?"
+          }
+        ],
+        "x-user-entity": [
+          {
+            "parameterName": "country",
+            "entityValue": [
+              "China",
+              "Japan"
+            ]
+          }
+        ],
+        "x-bot-jsonpPath-result": {
+          "item": 1,
+          "result": [
+            {
+              "title": "country",
+              "jsonPath": "$.response.country"
+            },
+            {
+              "title": "new cases",
+              "jsonPath": "$.response.cases.new"
+            },
+            {
+              "title": "active",
+              "jsonPath": "$.response.cases.active"
+            },
+            {
+              "title": "critical",
+              "jsonPath": "$.response.cases.critical"
+            },
+            {
+              "title": "recovered",
+              "jsonPath": "$.response.cases.recovered"
+            },
+            {
+              "title": "total cases",
+              "jsonPath": "$.response.cases.total"
+            },
+            {
+              "title": "new deaths",
+              "jsonPath": "$.response.deaths.new"
+            },
+            {
+              "title": "total deaths",
+              "jsonPath": "$.response.deaths.total"
+            },
+            {
+              "title": "time",
+              "jsonPath": "$.response.time"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

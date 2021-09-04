@@ -34,7 +34,7 @@
           {
             "name": "page",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer"
             },
@@ -43,7 +43,7 @@
           {
             "name": "per_page",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer"
             },
@@ -52,7 +52,7 @@
           {
             "name": "offset",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer"
             },
@@ -61,7 +61,7 @@
           {
             "name": "ada",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "boolean"
             },
@@ -70,7 +70,7 @@
           {
             "name": "unisex",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "boolean"
             },

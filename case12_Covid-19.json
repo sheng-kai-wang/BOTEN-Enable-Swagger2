@@ -108,39 +108,39 @@
           "result": [
             {
               "title": "country",
-              "jsonPath": "$.response.country"
+              "jsonPath": "$.response[0].country"
             },
             {
               "title": "new cases",
-              "jsonPath": "$.response.cases.new"
+              "jsonPath": "$.response[0].cases.new"
             },
             {
               "title": "active",
-              "jsonPath": "$.response.cases.active"
+              "jsonPath": "$.response[0].cases.active"
             },
             {
               "title": "critical",
-              "jsonPath": "$.response.cases.critical"
+              "jsonPath": "$.response[0].cases.critical"
             },
             {
               "title": "recovered",
-              "jsonPath": "$.response.cases.recovered"
+              "jsonPath": "$.response[0].cases.recovered"
             },
             {
               "title": "total cases",
-              "jsonPath": "$.response.cases.total"
+              "jsonPath": "$.response[0].cases.total"
             },
             {
               "title": "new deaths",
-              "jsonPath": "$.response.deaths.new"
+              "jsonPath": "$.response[0].deaths.new"
             },
             {
               "title": "total deaths",
-              "jsonPath": "$.response.deaths.total"
+              "jsonPath": "$.response[0].deaths.total"
             },
             {
               "title": "time",
-              "jsonPath": "$.response.time"
+              "jsonPath": "$.response[0].day"
             }
           ]
         }

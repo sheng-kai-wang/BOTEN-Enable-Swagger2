@@ -57,14 +57,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -142,10 +134,6 @@
           {
             "parameterName": "intlnumber",
             "utter": "What's your phone number(with country code)?"
-          },
-          {
-            "parameterName": "limit",
-            "utter": "How many limits do you want to set?"
           }
         ],
         "x-user-entity": [
@@ -163,19 +151,10 @@
             "entityValue": [
               886224622192
             ]
-          },
-          {
-            "parameterName": "limit",
-            "regex": [
-              "^[01]?[0-9]$"
-            ],
-            "entityValue": [
-              5
-            ]
           }
         ],
         "x-bot-jsonpPath-result": {
-          "item": 5,
+          "item": 1,
           "result": [
             {
               "title": "Country",

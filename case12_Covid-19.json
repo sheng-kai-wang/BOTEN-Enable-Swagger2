@@ -33,7 +33,7 @@
           {
             "name": "x-rapidapi-host",
             "in": "header",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -51,7 +51,7 @@
           {
             "name": "country",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "string"
             },

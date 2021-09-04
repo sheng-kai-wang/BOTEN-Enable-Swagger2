@@ -99,7 +99,11 @@
             "parameterName": "country",
             "entityValue": [
               "China",
-              "Japan"
+              "Japan",
+              "ALL",
+              "all",
+              "USA",
+              "usa"
             ]
           }
         ],

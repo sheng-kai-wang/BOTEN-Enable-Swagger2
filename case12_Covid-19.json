@@ -8,9 +8,7 @@
       {
         "flowName": "Covid-19",
         "flow": [
-          "/countries",
-          "/statistics",
-          "/history"
+          "/statistics"
         ],
         "x-input-template": {
           "useEndpoint": [

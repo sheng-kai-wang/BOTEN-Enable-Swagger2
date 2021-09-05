@@ -173,14 +173,22 @@
           },
           {
             "parameterName": "lat",
+            "regex": [
+              "^[\\d.]*$"
+            ],
             "entityValue": [
-              25.129253
+              25.129253,
+              26.123456
             ]
           },
           {
             "parameterName": "lng",
+            "regex": [
+              "^[\\d.]*$"
+            ],
             "entityValue": [
-              121.736299
+              121.736299,
+              123.123456
             ]
           }
         ],

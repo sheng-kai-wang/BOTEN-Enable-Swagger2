@@ -1,235 +1,225 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-    "title": "case13_refugeRestrooms",
-    "description": "Refuge Restrooms is a web application that seeks to provide safe restroom access for transgender, intersex, and gender nonconforming individuals. Users can search for restrooms by proximity to a search location, add new restroom listings, as well as comment and rate existing listings.",
-    "version": "0.0.1",
-    "x-chatbotFlow": [
-      {
-        "flowName": "refugeRestrooms",
-        "flow": [
-          "/v1/restrooms/by_location"
-        ],
-        "x-input-template": {
-          "useEndpoint": [
-            "I want to get refugeRestrooms endpoint",
-            "I want to use refugeRestrooms",
-            "I want to know where is the toilet",
-            "I want to go to the toilet"
-          ]
-        }
-      }
-    ]
-  },
-  "servers": [
-    {
-      "url": "https://www.refugerestrooms.org/api"
-    }
-  ],
-  "paths": {
-    "/v1/restrooms/by_location": {
-      "get": {
-        "description": "Search by location",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": 1
-          },
-          {
-            "name": "per_page",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": 10
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": 0
-          },
-          {
-            "name": "ada",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": false
-          },
-          {
-            "name": "unisex",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": false
-          },
-          {
-            "name": "lat",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": 25.129253
-          },
-          {
-            "name": "lng",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": 121.736299
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Search by location"
-          }
-        },
-        "x-chatbotFlow": [
-          {
-            "flowName": "refugeRestrooms"
-          }
-        ],
-        "x-bot-utter": [
-          {
-            "parameterName": "page",
-            "default": 1
-          },
-          {
-            "parameterName": "per_page",
-            "utter": "How many limits do you want to set?"
-          },
-          {
-            "parameterName": "offset",
-            "default": 0
-          },
-          {
-            "parameterName": "ada",
-            "default": false
-          },
-          {
-            "parameterName": "unisex",
-            "default": false
-          },
-          {
-            "parameterName": "lat",
-            "auto": "latitude"
-          },
-          {
-            "parameterName": "lng",
-            "auto": "longitude"
-          }
-        ],
-        "x-user-entity": [
-          {
-            "parameterName": "page",
-            "entityValue": [
-              1,
-              2
-            ]
-          },
-          {
-            "parameterName": "per_page",
-            "regex": [
-              "^([1-9]|10)$"
+    "openapi": "3.0.1",
+    "info": {
+        "title": "case13_refugeRestrooms",
+        "description": "Refuge Restrooms is a web application that seeks to provide safe restroom access for transgender, intersex, and gender nonconforming individuals. Users can search for restrooms by proximity to a search location, add new restroom listings, as well as comment and rate existing listings.",
+        "version": "0.0.1",
+        "x-chatbotFlow": [{
+            "flowName": "refugeRestrooms",
+            "flow": [
+                "/v1/restrooms/by_location"
             ],
-            "entityValue": [
-              1,
-              10
-            ]
-          },
-          {
-            "parameterName": "offset",
-            "entityValue": [
-              0
-            ]
-          },
-          {
-            "parameterName": "ada",
-            "entityValue": [
-              false
-            ]
-          },
-          {
-            "parameterName": "unisex",
-            "entityValue": [
-              false
-            ]
-          },
-          {
-            "parameterName": "lat",
-            "regex": [
-              "^[\\d.]*$"
-            ],
-            "entityValue": [
-              25.129253,
-              26.123456
-            ]
-          },
-          {
-            "parameterName": "lng",
-            "regex": [
-              "^[\\d.]*$"
-            ],
-            "entityValue": [
-              121.736299,
-              123.123456
-            ]
-          }
-        ],
-        "x-bot-jsonpPath-result": {
-          "item": 3,
-          "result": [
-            {
-              "title": "name",
-              "jsonPath": "$[*].name"
-            },
-            {
-              "title": "street",
-              "jsonPath": "$[*].street"
-            },
-            {
-              "title": "city",
-              "jsonPath": "$[*].city"
-            },
-            {
-              "title": "accessible",
-              "jsonPath": "$[*].accessible"
-            },
-            {
-              "title": "unisex",
-              "jsonPath": "$[*].unisex"
-            },
-            {
-              "title": "directions",
-              "jsonPath": "$[*].directions"
-            },
-            {
-              "title": "comment",
-              "jsonPath": "$[*].comment"
-            },
-            {
-              "title": "upvote",
-              "jsonPath": "$[*].upvote"
+            "x-input-template": {
+                "useEndpoint": [
+                    "I want to get refugeRestrooms endpoint",
+                    "I want to use refugeRestrooms",
+                    "I want to know where is the toilet",
+                    "I want to go to the toilet"
+                ]
             }
-          ]
+        }]
+    },
+    "servers": [{
+        "url": "https://www.refugerestrooms.org/api"
+    }],
+    "paths": {
+        "/v1/restrooms/by_location": {
+            "get": {
+                "description": "Search by location",
+                "parameters": [{
+                        "name": "page",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 0
+                    },
+                    {
+                        "name": "ada",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": false
+                    },
+                    {
+                        "name": "unisex",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": false
+                    },
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 25.129253
+                    },
+                    {
+                        "name": "lng",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 121.736299
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search by location"
+                    }
+                },
+                "x-chatbotFlow": [{
+                    "flowName": "refugeRestrooms"
+                }],
+                "x-bot-utter": [{
+                        "parameterName": "page",
+                        "default": "1"
+                    },
+                    {
+                        "parameterName": "per_page",
+                        "utter": "How many limits do you want to set?"
+                    },
+                    {
+                        "parameterName": "offset",
+                        "default": "0"
+                    },
+                    {
+                        "parameterName": "ada",
+                        "default": "false"
+                    },
+                    {
+                        "parameterName": "unisex",
+                        "default": "false"
+                    },
+                    {
+                        "parameterName": "lat",
+                        "auto": "latitude"
+                    },
+                    {
+                        "parameterName": "lng",
+                        "auto": "longitude"
+                    }
+                ],
+                "x-user-entity": [{
+                        "parameterName": "page",
+                        "entityValue": [
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "parameterName": "per_page",
+                        "regex": [
+                            "^([1-9]|10)$"
+                        ],
+                        "entityValue": [
+                            1,
+                            10
+                        ]
+                    },
+                    {
+                        "parameterName": "offset",
+                        "entityValue": [
+                            0
+                        ]
+                    },
+                    {
+                        "parameterName": "ada",
+                        "entityValue": [
+                            false
+                        ]
+                    },
+                    {
+                        "parameterName": "unisex",
+                        "entityValue": [
+                            false
+                        ]
+                    },
+                    {
+                        "parameterName": "lat",
+                        "regex": [
+                            "^[\\d.]*$"
+                        ],
+                        "entityValue": [
+                            25.129253,
+                            26.123456
+                        ]
+                    },
+                    {
+                        "parameterName": "lng",
+                        "regex": [
+                            "^[\\d.]*$"
+                        ],
+                        "entityValue": [
+                            121.736299,
+                            123.123456
+                        ]
+                    }
+                ],
+                "x-bot-jsonpPath-result": {
+                    "item": 3,
+                    "result": [{
+                            "title": "name",
+                            "jsonPath": "$[*].name"
+                        },
+                        {
+                            "title": "street",
+                            "jsonPath": "$[*].street"
+                        },
+                        {
+                            "title": "city",
+                            "jsonPath": "$[*].city"
+                        },
+                        {
+                            "title": "accessible",
+                            "jsonPath": "$[*].accessible"
+                        },
+                        {
+                            "title": "unisex",
+                            "jsonPath": "$[*].unisex"
+                        },
+                        {
+                            "title": "directions",
+                            "jsonPath": "$[*].directions"
+                        },
+                        {
+                            "title": "comment",
+                            "jsonPath": "$[*].comment"
+                        },
+                        {
+                            "title": "upvote",
+                            "jsonPath": "$[*].upvote"
+                        }
+                    ]
+                }
+            }
         }
-      }
     }
-  }
 }

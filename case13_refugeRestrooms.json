@@ -137,7 +137,7 @@
                     {
                         "parameterName": "per_page",
                         "regex": [
-                            "^([1-9]|10)$"
+                            "^[1-9]$"
                         ],
                         "entityValue": [
                             1,

@@ -42,7 +42,7 @@
                         "schema": {
                             "type": "string"
                         },
-                        "example": 10
+                        "example": 2
                     },
                     {
                         "name": "offset",
@@ -141,7 +141,10 @@
                         ],
                         "entityValue": [
                             1,
-                            10
+                            2,
+                            3,
+                            4,
+                            5
                         ]
                     },
                     {

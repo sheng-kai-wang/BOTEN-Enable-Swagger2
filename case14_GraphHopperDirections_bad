@@ -1,0 +1,1131 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "case14_GraphHopperDirections",
+    "description": "GraphHopper Directions API",
+    "version": "1.0.0",
+    "termsOfService": "https://www.graphhopper.com/terms/",
+    "contact": {
+      "name": "API Support",
+      "email": "support@graphhopper.com",
+      "url": "https://www.graphhopper.com/"
+    },
+    "x-chatbotFlow": [
+      {
+        "flowName": "travel_route_planning",
+        "flow": [
+          "/geocode",
+          "/isochrone",
+          "/route"
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "I want to plan my travel route",
+            "get the trip planning",
+            "Planning travel locations and routes",
+            "route planning"
+          ]
+        }
+      }
+    ]
+  },
+  "servers": [
+    {
+      "url": "https://graphhopper.com/api/1"
+    }
+  ],
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "paths": {
+    "/route": {
+      "get": {
+        "summary": "GET Route Endpoint",
+        "operationId": "getRoute",
+        "description": "The GET request is the most simple one: just specify the parameter in the URL and you are done.\nCan be tried directly in every browser.\n",
+        "parameters": [
+          {
+            "name": "point",
+            "in": "query",
+            "description": "The points for which the route should be calculated. Format: `[latitude,longitude]`. Specify at least an origin and a destination. Via points are possible.\nThe maximum number depends on your plan.\n",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "explode": true
+          },
+          {
+            "name": "point_hint",
+            "in": "query",
+            "description": "The `point_hint` is typically a road name to which the associated `point` parameter should be snapped to. Specify no `point_hint` parameter or the same number as you have `point` parameters.\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "explode": true
+          },
+          {
+            "name": "snap_prevention",
+            "in": "query",
+            "description": "Optional parameter to avoid snapping to a certain road class or road environment. Currently supported values are `motorway`, `trunk`, `ferry`, `tunnel`, `bridge` and `ford`. Multiple values are specified like `snap_prevention=ferry&snap_prevention=motorway`.\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "explode": true
+          },
+          {
+            "in": "query",
+            "name": "profile",
+            "description": "The vehicle profile for which the route should be calculated.\n",
+            "schema": {
+              "$ref": "#/components/schemas/VehicleProfileId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "curbside",
+            "description": "Optional parameter. It specifies on which side a point should be relative to the driver when she leaves/arrives at a start/target/via point. You need to specify this parameter for either none or all points. Only supported for motor vehicles and OpenStreetMap.\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ]
+              }
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale of the resulting turn instructions. E.g. `pt_PT` for Portuguese or `de` for German.\n",
+            "schema": {
+              "type": "string",
+              "default": "en"
+            }
+          },
+          {
+            "name": "elevation",
+            "in": "query",
+            "description": "If `true`, a third coordinate, the altitude, is included with all positions in the response.\nThis changes the format of the `points` and `snapped_waypoints` fields of the response, in both their\nencodings. Unless you switch off the `points_encoded` parameter, you need special code on the\nclient side that can handle three-dimensional coordinates.\n",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "description": "Optional parameter to retrieve path details. You can request additional details for the route: `street_name`, \n`time`, `distance`, `max_speed`, `toll`, `road_class`, `road_class_link`, `road_access`, `road_environment`, `lanes`, and `surface`. Read more about the usage of path details [here](https://discuss.graphhopper.com/t/2539).\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "explode": true
+          },
+          {
+            "in": "query",
+            "name": "optimize",
+            "description": "Normally, the calculated route will visit the points in the order you specified them.\nIf you have more than two points, you can set this parameter to `\"true\"` and the points may be re-ordered to minimize the total travel time.\nKeep in mind that the limits on the number of locations of the Route Optimization API applies, and the request costs more credits.\n",
+            "schema": {
+              "type": "string",
+              "default": "false"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instructions",
+            "description": "If instructions should be calculated and returned\n",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "calc_points",
+            "in": "query",
+            "description": "If the points for the route should be calculated at all.\n",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "debug",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If `true`, the output will be formatted.\n"
+          },
+          {
+            "name": "points_encoded",
+            "in": "query",
+            "description": "Allows changing the encoding of location data in the response. The default is polyline encoding, which is compact\nbut requires special client code to unpack. (We provide it in our JavaScript client library!)\nSet this parameter to `false` to switch the encoding to simple coordinate pairs like `[lon,lat]`, or `[lon,lat,elevation]`.\nSee the description of the response format for more information.\n",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "ch.disable",
+            "in": "query",
+            "description": "Use this parameter in combination with one or more parameters from below.\n",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "heading",
+            "in": "query",
+            "description": "Favour a heading direction for a certain point. Specify either one heading for the start point or as many as there are points.\nIn this case headings are associated by their order to the specific points. Headings are given as north based clockwise angle between 0 and 360 degree.\nThis parameter also influences the tour generated with `algorithm=round_trip` and forces the initial direction.  Requires `ch.disable=true`.\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "explode": true
+          },
+          {
+            "name": "heading_penalty",
+            "in": "query",
+            "description": "Time penalty in seconds for not obeying a specified heading. Requires `ch.disable=true`.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 120
+            }
+          },
+          {
+            "name": "pass_through",
+            "in": "query",
+            "description": "If `true`, u-turns are avoided at via-points with regard to the `heading_penalty`. Requires `ch.disable=true`.\n",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "algorithm",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "round_trip",
+                "alternative_route"
+              ]
+            },
+            "description": "Rather than looking for the shortest or fastest path, this parameter lets you solve two different problems related to routing:\nWith `alternative_route`, we give you not one but several routes that are close to optimal, but\nnot too similar to each other. \nWith `round_trip`, the route will get you back to where you started. This is meant for fun (think of\na bike trip), so we will add some randomness. The `round_trip` option requires `ch.disable=true`.\nYou can control both of these features with additional parameters, see below. \n"
+          },
+          {
+            "name": "round_trip.distance",
+            "in": "query",
+            "description": "If `algorithm=round_trip`, this parameter configures approximative length of the resulting round trip. Requires `ch.disable=true`.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10000
+            }
+          },
+          {
+            "name": "round_trip.seed",
+            "in": "query",
+            "description": "If `algorithm=round_trip`, this sets the random seed. Change this to get a different tour for each value.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "alternative_route.max_paths",
+            "in": "query",
+            "description": "If `algorithm=alternative_route`, this parameter sets the number of maximum paths which should be calculated. Increasing can lead to worse alternatives.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          },
+          {
+            "name": "alternative_route.max_weight_factor",
+            "in": "query",
+            "description": "If `algorithm=alternative_route`, this parameter sets the factor by which the alternatives routes can be longer than the optimal route. Increasing can lead to worse alternatives.\n",
+            "schema": {
+              "type": "number",
+              "default": 1.4
+            }
+          },
+          {
+            "name": "alternative_route.max_share_factor",
+            "in": "query",
+            "description": "If `algorithm=alternative_route`, this parameter specifies how similar an alternative route can be to the optimal route. Increasing can lead to worse alternatives.\n",
+            "schema": {
+              "type": "number",
+              "default": 0.6
+            }
+          }
+        ],
+        "tags": [
+          "Routing API"
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "I want to plan a route",
+            "where can i go",
+            "How do I get to my destination"
+          ]
+        },
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "source": "curl \"https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&profile=car&locale=de&calc_points=false&key=api_key\""
+          },
+          {
+            "lang": "Java",
+            "source": "OkHttpClient client = new OkHttpClient();\nRequest request = new Request.Builder()\n        .url(\"https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&profile=car&locale=de&calc_points=false&key=api_key\")\n        .get()\n        .build();\n\nResponse response = client.newCall(request).execute();"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Routing Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Your request is not valid. For example, you specified too few or too many points.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication necessary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "API limit reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. We get notified automatically and fix this asap.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/isochrone": {
+      "get": {
+        "summary": "Isochrone Endpoint",
+        "operationId": "getIsochrone",
+        "description": "### Example\nYou can get an example response via:\n\n```\ncurl \"https://graphhopper.com/api/1/isochrone?point=51.131108,12.414551&key=[YOUR_KEY]\"\n```\n\nDon't forget to replace the placeholder with your own key.\n\n### Introduction\n![Isochrone screenshot](./img/isochrone-example.png)\n\nAn isochrone of a location is ''a line connecting points at which a vehicle arrives at the same time'', see Wikipedia.\nWith the same API you can also calculate isodistances, just use the parameter distance_limit instead of time_limit`.\n\n### Use Cases\nSome possible areas in which this API may be useful to you:\n\n- real estate analysis\n- realtors\n- vehicle scheduling\n- geomarketing\n- reach of electric vehicles\n- transport planning\n- logistics (distribution and retail network planning)\n\n### API Clients and Examples\nSee the [clients](#section/API-Clients) section in the main documentation, and [live examples](https://graphhopper.com/api/1/examples/#isochrone).\n",
+        "parameters": [
+          {
+            "name": "point",
+            "in": "query",
+            "description": "Specify the start coordinate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "time_limit",
+            "in": "query",
+            "description": "Specify which time the vehicle should travel. In seconds.",
+            "schema": {
+              "default": 600,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "distance_limit",
+            "in": "query",
+            "description": "Specify which distance the vehicle should travel. In meters.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "profile",
+            "in": "query",
+            "description": "The vehicle profile for which the route should be calculated.\n",
+            "schema": {
+              "$ref": "#/components/schemas/VehicleProfileId"
+            }
+          },
+          {
+            "name": "buckets",
+            "in": "query",
+            "description": "Number by which to divide the given `time_limit` to create `buckets` nested isochrones of time intervals `time_limit-n*time_limit/buckets`. Applies analogously to `distance_limit`.",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "reverse_flow",
+            "in": "query",
+            "description": "If `false` the flow goes from point to the polygon, if `true` the flow goes from the polygon \"inside\" to the point.\nExample use case for `false`&#58; *How many potential customer can be reached within 30min travel time from your store* vs. `true`&#58; *How many customers can reach your store within 30min travel time.*\n",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "tags": [
+          "Isochrone API"
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "what city am i in",
+            "Where can I go in a certain time",
+            "Within a certain distance, where I can reach"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Isochrone Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsochroneResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/geocode": {
+      "get": {
+        "summary": "Geocoding Endpoint",
+        "operationId": "getGeocode",
+        "description": "\n### Introduction\n\n![Geocoding Example](./img/geocoding-example.png)\n\n_Geocoding_ describes the process of transforming an textual address representation to a coordinate (`latitude,longitude`).\nFor example the conversion from `Berlin` to `52.5170365,13.3888599`.\n\n_Reverse geocoding_ converts a coordinate to a textual address representation or place name. Find out more about Geocoding itself on [Wikipedia](http://en.wikipedia.org/wiki/Geocoding).\n",
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "source": "curl \"https://graphhopper.com/api/1/geocode?q=berlin&locale=de&debug=true&key=api_key\""
+          },
+          {
+            "lang": "Java",
+            "source": "OkHttpClient client = new OkHttpClient();\nRequest request = new Request.Builder()\n        .url(\"https://graphhopper.com/api/1/geocode?q=berlin&locale=de&debug=true&key=api_key\")\n        .get()\n        .build();\n\nResponse response = client.newCall(request).execute();"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "If you do forward geocoding, this is `required` and is a textual description of the address you are looking for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Display the search results for the specified locale. Currently French (fr), English (en), German (de) and Italian (it) are supported. If the locale wasn't found the default (en) is used.",
+            "schema": {
+              "type": "string",
+              "default": "en"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Specify the maximum number of results to return",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "description": "It is `required` to be `true` if you want to do a reverse geocoding request. If it is `true`, `point` must be defined as well, and `q` must not be used.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "debug",
+            "in": "query",
+            "description": "If `true`, the output will be formatted.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "point",
+            "in": "query",
+            "description": "_Forward geocoding_: The location bias in the format 'latitude,longitude' e.g. point=45.93272,11.58803. _Reverse geocoding_: The location to find amenities, cities.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "description": "The provider parameter is currently under development and can fall back to `default` at any time.\nThe intend is to provide alternatives to our default geocoder. Each provider has its own strenghts and might fit better for certain scenarios, so it's worth to compare the different providers.\nTo try it append the `provider`parameter to the URL like `&provider=nominatim`,\nthe result structure should be identical in all cases - if not, please report this back to us.\nKeep in mind that some providers do not support certain parameters or don't return some fields, for example `osm_id` and `osm_type` are not supported by every geocoding provider.\nIf you would like to use additional parameters of one of the providers, but it's not available for the GraphHopper Geocoding API, yet? Please contact us.\n\nThe credit costs can be different for all providers - see [here](https://support.graphhopper.com/support/solutions/articles/44000718211-what-is-one-credit-) for more information about it.\n\nCurrently, only the default provider and gisgraphy supports autocompletion of partial search strings.\n\nAll providers support normal \"forward\" geocoding and reverse geocoding via `reverse=true`.\n\n#### Default (`provider=default`)\n\nThis provider returns results of our internal geocoding engine, as described above.\nIn addition to the above documented parameters the following parameters are possible:\n* `bbox` - the expected format is `minLon,minLat,maxLon,maxLat`\n* `osm_tag` - you can filter `key:value` or exclude places with certain OpenStreetMap tags `!key:value`. E.g. `osm_tag=tourism:museum` or just the key `osm_tag=tourism`. To exclude multiple tags you add multiple `osm_tag` parameters.\n\n#### Nominatim (`provider=nominatim`)\n\nThe GraphHopper Directions API uses a commercially hosted Nominatim geocoder. You can try this provider [here](https://nominatim.openstreetmap.org/). The provider does **not** fall under the [restrictions](https://operations.osmfoundation.org/policies/nominatim/) of the Nominatim instance hosted by OpenStreetMap.\n\nIn addition to the above documented parameters Nominatim allows to use the following parameters, which can be used as documented [here](https://github.com/openstreetmap/Nominatim/blob/master/docs/api/Search.md#parameters):\n\n* `viewbox` - the expected format is `minLon,minLat,maxLon,maxLat`\n* `bounded` - If 1 and a viewbox is given, restrict the result to items contained within that viewbox. Default is 0.\n\n#### Gisgraphy (`provider=gisgraphy`)\n\nThis provider returns results from the Gisgraphy geocoder which you can try [here](https://services.gisgraphy.com/static/leaflet/index.html).\n\n**Limitations:** The `locale` parameter is not supported. Gisgraphy does not return OSM tags or an extent.\n\nGisgraphy has a special autocomplete API, which you can use by adding `autocomplete=true` (does not work with `reverse=true`). The autocomplete API is optimized on predicting text input, but returns less information.\n\nIn addition to the above documented parameters Gisgraphy allows to use the following parameters, which can be used as documented [here](https://www.gisgraphy.com/documentation/user-guide.php#geocodingservice):\n\n* `radius` - radius in meters\n* `country` - restrict search for the specified country. The value must be the ISO 3166 Alpha 2 code of the country.\n\n#### NetToolKit (`provider=nettoolkit`)\n\nThis provider returns results from the NetToolKit provider which is specialized for US addresses and provides a wrapper around Nominatim for other addresses. You can try it [here](https://www.nettoolkit.com/geo/demo).\n\nThe following additional NetToolKit parameters are supported (read [here](https://www.nettoolkit.com/docs/geo/geocoding) for more details):\n- `source`: User can choose which source provider to geocode the address, this value is \"NetToolKit\" by default\n- `country_code`: an iso-3166-2 country code (e.g : US) filter the results to the specify country code\n\n**Limitations:** NetToolKit does not support the `locale` parameter. NetToolKit does not return OSM tags (e.g. osm_id, osm_type, osm_value).\n\n#### OpenCage Data (`provider=opencagedata`)\n\nThis provider returns results from the OpenCageData geocoder which you can try [here](https://geocoder.opencagedata.com/demo).\n\nIn addition to the above documented parameters OpenCage Data allows to use the following parameters, which can be used as documented [here](https://geocoder.opencagedata.com/api#forward-opt):\n\n* countrycode - The country code is a two letter code as defined by the ISO 3166-1 Alpha 2 standard. E.g. gb for the United Kingdom, fr for France, us for United States. \n* bounds - the expected format is `minLon,minLat,maxLon,maxLat`\n",
+            "schema": {
+              "type": "string",
+              "default": "default"
+            }
+          }
+        ],
+        "x-input-template": {
+          "useEndpoint": [
+            "what is my current location?",
+            "what is my latitude and longitude",
+            "get the trip planning"
+          ]
+        },
+        "tags": [
+          "Geocoding API"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array found locations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeocodingResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "description": "Your current daily credit limit.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Your remaining credits until the reset.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "The number of seconds that you have to wait before a reset of the credit count is done.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Credits": {
+                "description": "The credit costs for this request. Note it could be a decimal and even negative number, e.g. when an async request failed.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GHError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "key",
+        "in": "query"
+      }
+    },
+    "schemas": {
+      "GeocodingResponse": {
+        "properties": {
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeocodingLocation"
+            }
+          },
+          "took": {
+            "type": "number",
+            "format": "int64",
+            "description": "in ms"
+          }
+        },
+        "example": {
+          "$ref": "examples/geocodingResponse.json"
+        }
+      },
+      "GeocodingLocation": {
+        "type": "object",
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/GeocodingPoint"
+          },
+          "osm_id": {
+            "type": "string",
+            "description": "The OSM ID of the entity"
+          },
+          "osm_type": {
+            "type": "string",
+            "description": "N = node, R = relation, W = way"
+          },
+          "osm_key": {
+            "type": "string",
+            "description": "The OSM key of the entity"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the entity. Can be a boundary, POI, address, etc"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country of the address"
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address"
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the address"
+          },
+          "street": {
+            "type": "string",
+            "description": "The street of the address"
+          },
+          "housenumber": {
+            "type": "string",
+            "description": "The housenumber of the address"
+          },
+          "postcode": {
+            "type": "string",
+            "description": "The postcode of the address"
+          }
+        }
+      },
+      "GeocodingPoint": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "format": "double",
+            "description": "Latitude"
+          },
+          "lng": {
+            "type": "number",
+            "format": "double",
+            "description": "Longitude"
+          }
+        }
+      },
+      "RouteResponse": {
+        "type": "object",
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteResponsePath"
+            }
+          },
+          "info": {
+            "$ref": "#/components/schemas/ResponseInfo"
+          }
+        },
+        "example": {
+          "$ref": "examples/routeResponse.json"
+        }
+      },
+      "EncodedLineString": {
+        "type": "string",
+        "description": "A polyline-encoded list of positions. You'll need to decode this string in client code. We provide open source code in [Java](https://github.com/graphhopper/graphhopper/blob/e649aaed8d3f4378bf2d8889bbbc2318261eabb2/web-api/src/main/java/com/graphhopper/http/WebHelper.java#L54) and [JavaScript](https://github.com/graphhopper/directions-api-js-client/blob/cf43d1a5bc93a3e8007a44fcfc551117e4fa49bc/src/GHUtil.js#L27)."
+      },
+      "RouteResponsePath": {
+        "type": "object",
+        "properties": {
+          "distance": {
+            "description": "The total distance, in meters. To get this information for one 'leg' please read [this blog post](https://www.graphhopper.com/blog/2019/11/28/routing-api-using-path-details/).\n",
+            "type": "number",
+            "format": "double"
+          },
+          "time": {
+            "description": "The total travel time, in milliseconds. To get this information for one 'leg' please read [this blog post](https://www.graphhopper.com/blog/2019/11/28/routing-api-using-path-details/).\n",
+            "type": "integer",
+            "format": "int64"
+          },
+          "ascend": {
+            "description": "The total ascent, in meters.\n",
+            "type": "number",
+            "format": "double"
+          },
+          "descend": {
+            "description": "The total descent, in meters.\n",
+            "type": "number",
+            "format": "double"
+          },
+          "points": {
+            "allOf": [
+              {
+                "description": "The geometry of the route. The format depends on the value of `points_encoded`.\n"
+              },
+              {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/EncodedLineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LineString"
+                  }
+                ]
+              }
+            ]
+          },
+          "snapped_waypoints": {
+            "allOf": [
+              {
+                "description": "The snapped input points. The format depends on the value of `points_encoded`.\n"
+              },
+              {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/EncodedLineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LineString"
+                  }
+                ]
+              }
+            ]
+          },
+          "points_encoded": {
+            "description": "Whether the `points` and `snapped_waypoints` fields are polyline-encoded strings rather than JSON arrays\nof coordinates. See the field description for more information on the two formats.\n",
+            "type": "boolean"
+          },
+          "bbox": {
+            "description": "The bounding box of the route geometry. Format: `[minLon, minLat, maxLon, maxLat]`.\n",
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "instructions": {
+            "type": "array",
+            "description": "The instructions for this route. This feature is under active development, and our instructions can sometimes be misleading,\nso be mindful when using them for navigation.\n",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "A description what the user has to do in order to follow the route. The language depends on the locale parameter.\n"
+                },
+                "street_name": {
+                  "type": "string",
+                  "description": "The name of the street to turn onto in order to follow the route.\n"
+                },
+                "distance": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The distance for this instruction, in meters.\n"
+                },
+                "time": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The duration for this instruction, in milliseconds.\n"
+                },
+                "interval": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "description": "Two indices into `points`, referring to the beginning and the end of the segment of the route\nthis instruction refers to.\n"
+                },
+                "sign": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "A number which specifies the sign to show:\n\n| sign | description  |\n|---|---|\n|-98| an U-turn without the knowledge if it is a right or left U-turn |\n| -8| a left U-turn |\n| -7| keep left |\n| -6| **not yet used**: leave roundabout |\n| -3| turn sharp left |\n| -2| turn left |\n| -1| turn slight left |\n|  0| continue on street |\n|  1| turn slight right |\n|  2| turn right |\n|  3| turn sharp right |\n|  4| the finish instruction before the last point |\n|  5| the instruction before a via point |\n|  6| the instruction before entering a roundabout |\n|  7| keep right |\n|  8| a right U-turn |\n|  *| **For future compatibility** it is important that all clients are able to handle also unknown instruction sign numbers\n"
+                },
+                "exit_number": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Only available for roundabout instructions (sign is 6). The count of exits at which the route leaves the roundabout.\n"
+                },
+                "turn_angle": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Only available for roundabout instructions (sign is 6). The radian of the route within the roundabout `0 < r < 2*PI` for clockwise and\n`-2*PI < r < 0` for counterclockwise turns.\n"
+                }
+              }
+            }
+          },
+          "details": {
+            "type": "object",
+            "description": "Details, as requested with the `details` parameter. Consider the value `{\"street_name\": [[0,2,\"Frankfurter Straße\"],[2,6,\"Zollweg\"]]}`.\nIn this example, the route uses two streets: The first, Frankfurter Straße, is\nused between `points[0]` and `points[2]`, and the second, Zollweg, between `points[2]` and `points[6]`.\nSee [here](https://discuss.graphhopper.com/t/2539) for discussion.\n"
+          },
+          "points_order": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "An array of indices (zero-based), specifiying the order in which the input points are visited.\nOnly present if the `optimize` parameter was used.\n"
+          }
+        }
+      },
+      "ResponseInfo": {
+        "type": "object",
+        "description": "Additional information for your request",
+        "properties": {
+          "copyrights": {
+            "description": "Attribution according to our documentation is necessary if no white-label option included.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "took": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "IsochroneResponse": {
+        "type": "object",
+        "properties": {
+          "polygons": {
+            "type": "array",
+            "description": "The list of polygons in GeoJson format. It can be used e.g. in the Leaflet framework:\n\n```\nL.geoJson(json.polygons).addTo(map)\n```\n\nThe number of polygon is identical to the specified buckets in the query. Every polygon contains the bucket number in the properties section of the GeoJson.\n",
+            "items": {
+              "$ref": "#/components/schemas/IsochroneResponsePolygon"
+            }
+          },
+          "copyrights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "example": {
+          "polygons": [
+            {
+              "properties": {
+                "bucket": 0
+              },
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    13.351851,
+                    52.51345
+                  ],
+                  [
+                    13.350402,
+                    52.516949
+                  ],
+                  [
+                    13.352598,
+                    52.522252
+                  ],
+                  [
+                    13.351851,
+                    52.51345
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "IsochroneResponsePolygon": {
+        "type": "object",
+        "description": "A found path",
+        "properties": {
+          "properties": {
+            "type": "object",
+            "properties": {
+              "bucket": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/Polygon"
+          }
+        }
+      },
+      "LineString": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "coordinates": {
+            "type": "array",
+            "description": "A list of coordinate pairs or triples, `[lon,lat]` or `[lon,lat,elevation]`.\n",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "Polygon": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GHError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "hints": {
+            "description": "Optional error information.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "VehicleProfileId": {
+        "type": "string",
+        "enum": [
+          "car",
+          "bike",
+          "foot",
+          "hike",
+          "mtb",
+          "racingbike",
+          "scooter",
+          "truck",
+          "small_truck"
+        ],
+        "default": "car"
+      }
+    }
+  }
+}

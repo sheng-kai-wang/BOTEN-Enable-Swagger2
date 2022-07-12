@@ -21,7 +21,6 @@
         "x-input-template": {
           "useEndpoint": [
             "I want to plan my travel route",
-            "get the trip planning",
             "Planning travel locations and routes",
             "route planning"
           ]

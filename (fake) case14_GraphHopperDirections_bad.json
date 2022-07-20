@@ -554,7 +554,7 @@
         "x-input-template": {
           "useEndpoint": [
             "where can i go",
-            "Where can I go in a certain time",
+            "I want to get a route planning",
             "Within a certain distance, where I can reach"
           ]
         },

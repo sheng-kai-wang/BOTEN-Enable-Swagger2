@@ -21,8 +21,8 @@
         "x-input-template": {
           "useEndpoint": [
             "I want to plan my travel route",
-            "Planning travel locations and routes",
-            "route planning"
+            "get the trip planning",
+            "Planning travel locations and routes"
           ]
         }
       }
@@ -288,8 +288,8 @@
         "x-input-template": {
           "useEndpoint": [
             "I want to plan a route",
-            "where can i go",
-            "How do I get to my destination"
+            "How do I get to my destination",
+            "where can i go to"
           ]
         },
         "x-code-samples": [
@@ -553,7 +553,7 @@
         ],
         "x-input-template": {
           "useEndpoint": [
-            "what city am i in",
+            "where can i go",
             "Where can I go in a certain time",
             "Within a certain distance, where I can reach"
           ]
@@ -664,8 +664,8 @@
         "x-input-template": {
           "useEndpoint": [
             "what is my current location?",
-            "what is my latitude and longitude",
-            "get the trip planning"
+            "get the travel planning",
+            "what is my latitude and longitude"
           ]
         },
         "tags": [
